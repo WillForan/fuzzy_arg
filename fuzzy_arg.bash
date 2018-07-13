@@ -15,15 +15,17 @@ _hist_words() {
      # remove leading number
      s/^ +\d+ +//; 
      # split words (include "a word"), push to array if unique
-     for(quotewords("\\s+\|\\\|",1,$_)){push @a, $_ if $h{$_}++ < 1 };
+     for(quotewords("\\s+\|\\\|",1,$_)){
+        push @a, $_ if $h{$_}++ < 1 and length($_)>1
+     };
      # print in reverse order (newest first)
      END{print $_ for reverse(@a)}
    '
 }
 
 # how to show choices
-# consider using fzf somehow?
-_fuzzy_menu() { rofi -dmenu -matching fuzzy; }
+#_fuzzy_menu() { rofi -dmenu -matching fuzzy; } # X11 with rofi in dmenu mode
+_fuzzy_menu() { fzf; } # https://github.com/junegunn/fzf
 
 # how to insert into
 # https://unix.stackexchange.com/questions/391679/how-to-automatically-insert-a-string-after-the-prompt
