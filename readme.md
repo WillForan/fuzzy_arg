@@ -1,9 +1,10 @@
 # Fuzzy Arg
 <kbd>Ctrl-r</kbd> for <kbd>Alt-.</kbd>
 
+## Usage
+default bindings are to <kbd>alt-a</kbd> and <kbd>Ctrl-x Ctrl-a</kbd>. Use either to fuzzy find arguments in your shell history.
 
 ## Install
-default binds to <kbd>alt-a</kbd> and <kbd>Ctrl-x Ctrl-a</kbd>
 ```bash
 # if you're too trusting, espeically lazy, and not concerned about updates
 curl https://raw.githubusercontent.com/WillForan/fuzzy_arg/master/fuzzy_arg.bash >> $HOME/.bashrc
@@ -19,8 +20,11 @@ echo "source $(pwd)/fuzzy_arg.bash" >> $HOME/.bashrc
 ```
 
 ## Example
+
 [![example](https://asciinema.org/a/TjBCkxioW2ogvW125OymwYOyU.png)](https://asciinema.org/a/TjBCkxioW2ogvW125OymwYOyU?autoplay=1)
+
 after sourcing `fuzzy_arg.bash` or adding to and re-sourcing `~/.bashrc`
+
 ```
 # setup. pretend this are meaningful commands
 echo "some long string might need again" > /tmp/long_file_name_that_is_hard_to_tab_complete
@@ -34,5 +38,3 @@ diff
 
 echo # M-a 'str agn'
 ```
-
-N.B. in this example the builtin <kbd>Alt+.</kbd> would be easier.
