@@ -24,4 +24,4 @@ echo "a different long stretch of characters" > /tmp/long_file_name_copy_should_
 diff #[push alt+a here diff to grab each long file]
 ```
 
-N.B. in this example the builtin <kbd>Alt+.</kdb> would be easier.
+N.B. in this example the builtin <kbd>Alt+.</kbd> would be easier.
