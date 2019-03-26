@@ -21,7 +21,7 @@ echo "source $(pwd)/fuzzy_arg.bash" >> $HOME/.bashrc
 
 ## Example
 
-[![example](https://asciinema.org/a/TjBCkxioW2ogvW125OymwYOyU.png)](https://asciinema.org/a/TjBCkxioW2ogvW125OymwYOyU?autoplay=1)
+[![example](https://asciinema.org/a/piZnUrRVqqTzbDc4S9VsvaCyl.png)](https://asciinema.org/a/piZnUrRVqqTzbDc4S9VsvaCyl?autoplay=1)
 
 after sourcing `fuzzy_arg.bash` or adding to and re-sourcing `~/.bashrc`
 
