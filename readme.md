@@ -38,3 +38,13 @@ diff
 
 echo # M-a 'str agn'
 ```
+
+# fuzzy new files
+
+replace the anti-pattern of
+```
+ls -tlc |head
+[copy]
+cmd-for-new-file [paste]
+```
+<kbd>Alt+n</kbd> from `source fuzzy_new_files.bash`

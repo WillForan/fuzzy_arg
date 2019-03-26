@@ -25,7 +25,9 @@ _hist_words() {
 
 # how to show choices
 #_fuzzy_menu() { rofi -dmenu -matching fuzzy; } # X11 with rofi in dmenu mode
-_fuzzy_menu() { fzf; } # https://github.com/junegunn/fzf
+
+# https://github.com/junegunn/fzf
+_fuzzy_menu() { fzf +s; }  # no sort
 
 # how to insert into
 # https://unix.stackexchange.com/questions/391679/how-to-automatically-insert-a-string-after-the-prompt
