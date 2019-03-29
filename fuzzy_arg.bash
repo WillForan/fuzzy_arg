@@ -33,10 +33,19 @@ _fuzzy_menu() { fzf +s; }  # no sort
 # https://unix.stackexchange.com/questions/391679/how-to-automatically-insert-a-string-after-the-prompt
 # https://bbs.archlinux.org/viewtopic.php?id=199495, cf. h2ph
 _bash_insert() { perl -le 'ioctl(STDIN,0x5412,$_) for split "", join " ", @ARGV' -- "$@";}
+_zsh_insert() { LBUFFER+="$@"; }
 
 # put it all together
-_lookup_args() { _bash_insert $(_hist_words | _fuzzy_menu ); }
+_SHELL=bash
+[ $(basename $SHELL) = "zsh" ] && _SHELL=zsh
+
+_lookup_args() { _${_SHELL}_insert $(_hist_words | _fuzzy_menu ); }
 
 # bind to keys (alt+a, ctrl+x ctrl+a)
-bind -x '"\ea":"_lookup_args"'
-bind -x '"\C-x\C-a":"_lookup_args"'
+if [ $(basename $SHELL) = "zsh" ]; then
+   zle -N _lookup_args
+   bindkey "^[a" _lookup_args
+else
+   bind -x '"\ea":"_lookup_args"'
+   bind -x '"\C-x\C-a":"_lookup_args"'
+fi
