@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# INSTEAD USE: fuzzy_new_complete.bash 
+# more flexible
+
 # fzf to select from files sorted by modifcation time
 #  replace anti-pattern 
 #   ls -tlc|head

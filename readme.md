@@ -41,10 +41,21 @@ echo # M-a 'str agn'
 
 # fuzzy new files
 
-replace the anti-pattern of
+`source fuzzy_new_complete.bash` replaces the workflow:
+
 ```
-ls -tlc |head
+ls -tlc ~/Downloads |head
 [copy]
 cmd-for-new-file [paste]
 ```
-<kbd>Alt+n</kbd> from `source fuzzy_new_files.bash`
+
+with 
+```
+cmd-for-new-file ~/Downloads[alt+n]
+```
+
+This is coded with bash in mind.
+I hear there are better ways to do this in zsh (`zstyle ':completion:*' file-sort modification reverse`).
+
+
+`fuzzy_new_files.bash` implements this only for the cwd and does not deal with already completed text.
