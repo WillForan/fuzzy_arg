@@ -45,8 +45,15 @@ _newfile_at_point() {
     upto=$(_last_partial_arg "$upto")
     local f=$(_find_newest "$upto" | fzf +s|cut -d' ' -f2)
     if [ -n "$f" ]; then
-       perl -le 'ioctl(STDIN,0x5412,"") for (1..$ARGV[0])' -- ${#upto} 
-       perl -le 'ioctl(STDIN,0x5412,$_) for split "", join " ", @ARGV' -- "$f"
+       # update readline to 
+       # - exclude the part we completed on
+       # - insert the new competed file
+       NEWSTART=$[$READLINE_POINT - ${#upto}]
+       REST="${READLINE_LINE:$READLINE_POINT}"
+       # update readline
+       READLINE_LINE="${READLINE_LINE:0:$NEWSTART}$f$REST"
+       # move point to after completion
+       READLINE_POINT=$[${NEWSTART}+${#f}]
     fi
     return
 }
