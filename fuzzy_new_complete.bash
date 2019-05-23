@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-# complete files sorted by date using alt+n instead of tab
-# TODO: cannot send ^H to terminal with perl+ioctl
-#  "Modification of a read-only value attempted at -e line 1."
+# BASH: complete files sorted by date using alt+n instead of tab
 #
 # https://unix.stackexchange.com/questions/90943/how-to-order-files-by-date-in-tab-completion-list
 #
@@ -11,7 +9,9 @@
 #   compinit
 #   zstyle ':completion:*' file-sort modification reverse
 
-# given a string up to where the cursor is, find what the last argument is
+# given a string, find last argument
+# has an eye for potentially dangling quote: like '/path/to thing with/spa
+# respects escaped spaces (and escaped quotes within a quote)
 _last_partial_arg() {
  echo "$@" |
     perl -pe '
@@ -36,10 +36,31 @@ _last_partial_arg() {
     ' 
 }
 
+# given a directory or partial path, find the newst files there
+# does not recurse into sub directories
 _find_newest() {
-  find "$(dirname "$1")" -maxdepth 1 -name "$(basename "$1")*" -printf "%TY%Tm%Td-%TT %p\n" | sort -rn
+   local dir fpart part
+   # directories have file part
+   if [ -d "$1" ]; then 
+      dir="$1"  
+      fpart="*"
+   # but potnetionally incomplete paths do have file parts
+   else
+      dir="$(dirname "$1")"
+      fpart="$(basename "$1")*"
+   fi
+   # ~ will be quoted, and "~" is not a real path
+   [[ "$dir" =~ \~ ]] && dir=$(realpath "$dir")
+   # find files, exclude the directoyr itself
+   # sort by mod time
+   find "$dir" -maxdepth 1 -name "$fpart" -printf "%TY%Tm%Td-%TT %p\n" |
+       egrep -v " $dir$" |
+       sort -rn
 }
 
+# use in bind:
+# use point to find arugment we are over and try to "tab complete" it
+# but sort files by date
 _newfile_at_point() {
     local upto="${READLINE_LINE:0:$READLINE_POINT}"
     upto=$(_last_partial_arg "$upto")
@@ -58,4 +79,5 @@ _newfile_at_point() {
     return
 }
 
+# bind to alt+n
 bind -x '"\en":"_newfile_at_point"'
