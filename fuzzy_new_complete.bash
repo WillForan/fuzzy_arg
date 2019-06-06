@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
 # BASH: complete files sorted by date using alt+n instead of tab
-#
 # https://unix.stackexchange.com/questions/90943/how-to-order-files-by-date-in-tab-completion-list
+
+# USAGE:
+#  source fuzzy_new_complete.bash
+#  7z ~/Downloads/[alt+n]
+#
 #
 # for zsh consider something like
 #   autoload -U compinit
