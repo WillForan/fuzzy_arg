@@ -43,6 +43,9 @@ echo # M-a 'str agn'
 
 `source fuzzy_new_complete.bash` replaces the workflow:
 
+[![asciicast](https://asciinema.org/a/250283.svg)](https://asciinema.org/a/250283)
+
+
 ```
 ls -tlc ~/Downloads |head
 [copy]
