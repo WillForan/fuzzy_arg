@@ -37,24 +37,30 @@ _last_partial_arg() {
      s/^.* //; # remove any leading space
      s/\0/ /g; # put spaces back
      s/\001/"/g; # put double quotes back
-    ' 
+    '
 }
+
 
 # given a directory or partial path, find the newst files there
 # does not recurse into sub directories
 _find_newest() {
-   local dir fpart part
-   # directories have file part
-   if [ -d "$1" ]; then 
-      dir="$1"  
+   local dir fpart part input
+   # ~ is okay but "~" is not.
+   # quotes would be needed if there are spaces in folder name/file part
+   # but i don't think we'd ever see input with spaces
+   # thats up to _last_partial_arg
+   input="$@"
+   [[ "$input" =~ ^~ ]] && input="$HOME/${input:1}"
+   # directories have no file part. use all
+   if [ -d "$input" ]; then
+      dir="$input"
       fpart="*"
    # but potnetionally incomplete paths do have file parts
    else
-      dir="$(dirname "$1")"
-      fpart="$(basename "$1")*"
+      dir="$(dirname "$input")"
+      fpart="$(basename "$input")*"
    fi
-   # ~ will be quoted, and "~" is not a real path
-   [[ "$dir" =~ \~ ]] && dir=$(realpath "$dir")
+   # '~/': dir: '.', part '~*'
    # find files, exclude the directoyr itself
    # sort by mod time
    find "$dir" -maxdepth 1 -name "$fpart" -printf "%TY%Tm%Td-%TT %p\n" |
@@ -70,7 +76,7 @@ _newfile_at_point() {
     upto=$(_last_partial_arg "$upto")
     local f=$(_find_newest "$upto" | fzf +s|cut -d' ' -f2)
     if [ -n "$f" ]; then
-       # update readline to 
+       # update readline to
        # - exclude the part we completed on
        # - insert the new competed file
        NEWSTART=$[$READLINE_POINT - ${#upto}]
