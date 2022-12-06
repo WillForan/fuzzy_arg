@@ -65,7 +65,7 @@ _find_newest() {
    # sort by mod time
    find "$dir" -maxdepth 1 -name "$fpart" -printf "%TY%Tm%Td-%TT %p\n" |
        grep -Pv " $dir$" |
-       sort -rn | sed "s: $HOME: ~:"
+       sort -rn 
 }
 
 # use in bind:
@@ -74,11 +74,14 @@ _find_newest() {
 _newfile_at_point() {
     local f upto="${READLINE_LINE:0:$READLINE_POINT}"
     upto=$(_last_partial_arg "$upto")
-    f="$(_find_newest "$upto" | fzf +s|cut -d' ' -f2)"
+    f="$(_find_newest "$upto" | fzf +s|cut -d' ' -f2-)"
     if [ -n "$f" ]; then
+       f="$(printf '%q' "$f"|sed "s:$HOME:~:")"
        # update readline to
        # - exclude the part we completed on
        # - insert the new competed file
+       # TODO: this will be off if we swaped between $HOME and ~
+       #       and doesn't count %q changed input
        NEWSTART="$((READLINE_POINT - ${#upto}))"
        REST="${READLINE_LINE:$READLINE_POINT}"
        # update readline
