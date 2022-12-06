@@ -44,13 +44,13 @@ _last_partial_arg() {
 # given a directory or partial path, find the newst files there
 # does not recurse into sub directories
 _find_newest() {
-   local dir fpart part input
+   local dir fpart input
    # ~ is okay but "~" is not.
    # quotes would be needed if there are spaces in folder name/file part
    # but i don't think we'd ever see input with spaces
    # thats up to _last_partial_arg
-   input="$@"
-   [[ "$input" =~ ^~ ]] && input="$HOME/${input:1}"
+   input="$*"
+   [[ "$input" =~ ^~ ]] && input="$HOME${input:1}"
    # directories have no file part. use all
    if [ -d "$input" ]; then
       dir="$input"
@@ -64,27 +64,27 @@ _find_newest() {
    # find files, exclude the directoyr itself
    # sort by mod time
    find "$dir" -maxdepth 1 -name "$fpart" -printf "%TY%Tm%Td-%TT %p\n" |
-       egrep -v " $dir$" |
-       sort -rn
+       grep -Pv " $dir$" |
+       sort -rn | sed "s: $HOME: ~:"
 }
 
 # use in bind:
 # use point to find arugment we are over and try to "tab complete" it
 # but sort files by date
 _newfile_at_point() {
-    local upto="${READLINE_LINE:0:$READLINE_POINT}"
+    local f upto="${READLINE_LINE:0:$READLINE_POINT}"
     upto=$(_last_partial_arg "$upto")
-    local f=$(_find_newest "$upto" | fzf +s|cut -d' ' -f2)
+    f="$(_find_newest "$upto" | fzf +s|cut -d' ' -f2)"
     if [ -n "$f" ]; then
        # update readline to
        # - exclude the part we completed on
        # - insert the new competed file
-       NEWSTART=$[$READLINE_POINT - ${#upto}]
+       NEWSTART="$((READLINE_POINT - ${#upto}))"
        REST="${READLINE_LINE:$READLINE_POINT}"
        # update readline
        READLINE_LINE="${READLINE_LINE:0:$NEWSTART}$f$REST"
        # move point to after completion
-       READLINE_POINT=$[${NEWSTART}+${#f}]
+       READLINE_POINT="$((NEWSTART+${#f}))"
     fi
     return
 }
