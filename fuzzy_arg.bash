@@ -32,8 +32,19 @@ _fuzzy_menu() { fzf +s; }  # no sort
 # how to insert into
 # https://unix.stackexchange.com/questions/391679/how-to-automatically-insert-a-string-after-the-prompt
 # https://bbs.archlinux.org/viewtopic.php?id=199495, cf. h2ph
-_bash_insert() { perl -le 'ioctl(STDIN,0x5412,$_) for split "", join " ", @ARGV' -- "$@";}
-_zsh_insert() { LBUFFER+="$@"; }
+# 20231126 - ioctl working but not from fzf?
+_bash_insert_old() { perl -le 'ioctl(STDIN,0x5412,$_) for split "", join " ", @ARGV' -- "$@";}
+
+# simplified fuzzy_new_complete.bash:_readline_complete
+_bash_insert(){
+   local insert
+   insert="$(printf '%q' "$*")"
+   # update readline and move point to after what's inserted
+   NEWSTART="$READLINE_POINT"
+   READLINE_LINE="${READLINE_LINE:0:$NEWSTART}$insert"
+   READLINE_POINT="$((NEWSTART+${#insert}))"
+}
+_zsh_insert() { LBUFFER+="$*"; }
 
 # put it all together
 _SHELL=bash

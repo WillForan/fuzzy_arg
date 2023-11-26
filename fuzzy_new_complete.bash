@@ -67,6 +67,22 @@ _find_newest() {
        grep -Pv " $dir$" |
        sort -rn 
 }
+_readline_complete(){
+   local full partial
+   partial="$1"; shift
+   full="$(printf '%q' "$*")"
+   # update readline to
+   # - exclude the part we completed on
+   # - insert the new competed file
+   # TODO: this will be off if we swaped between $HOME and ~
+   #       and doesn't count %q changed input
+   NEWSTART="$((READLINE_POINT - ${#partial}))"
+   REST="${READLINE_LINE:$READLINE_POINT}"
+   # update readline
+   READLINE_LINE="${READLINE_LINE:0:$NEWSTART}$f$REST"
+   # move point to after completion
+   READLINE_POINT="$((NEWSTART+${#full}))"
+}
 
 # use in bind:
 # use point to find arugment we are over and try to "tab complete" it
@@ -74,20 +90,11 @@ _find_newest() {
 _newfile_at_point() {
     local f upto="${READLINE_LINE:0:$READLINE_POINT}"
     upto=$(_last_partial_arg "$upto")
+    # current word/file "up to" cursor position
     f="$(_find_newest "$upto" | fzf +s|cut -d' ' -f2-)"
     if [ -n "$f" ]; then
        f="$(printf '%q' "$f"|sed "s:$HOME:~:")"
-       # update readline to
-       # - exclude the part we completed on
-       # - insert the new competed file
-       # TODO: this will be off if we swaped between $HOME and ~
-       #       and doesn't count %q changed input
-       NEWSTART="$((READLINE_POINT - ${#upto}))"
-       REST="${READLINE_LINE:$READLINE_POINT}"
-       # update readline
-       READLINE_LINE="${READLINE_LINE:0:$NEWSTART}$f$REST"
-       # move point to after completion
-       READLINE_POINT="$((NEWSTART+${#f}))"
+       _readline_complete "$upto" "$f"
     fi
     return
 }
